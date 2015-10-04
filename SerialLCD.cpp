@@ -32,6 +32,8 @@
 
 #include "SerialLCD.h"
 
+#define LCD_SERIAL Serial1
+
 //--------------------------------------------------------
 
 // (don't change here - specify on calling constructor)
@@ -111,8 +113,8 @@ void spitransfer(unsigned char var) {
 void sendcommand(unsigned char command) {
 	switch (g_interface) {
 		case RS232: 
-			Serial.write(0xFE);
-			Serial.write(command);
+			LCD_SERIAL.write(0xFE);
+			LCD_SERIAL.write(command);
 			break;
 		case I2C:
 			Wire.beginTransmission(g_i2c_address);
@@ -131,9 +133,9 @@ void sendcommand(unsigned char command) {
 void sendcommand2(unsigned char command, unsigned char value) {
 	switch (g_interface) {
 		case RS232: 
-			Serial.write(0xFE);
-			Serial.write(command);
-			Serial.write(value);
+			LCD_SERIAL.write(0xFE);
+			LCD_SERIAL.write(command);
+			LCD_SERIAL.write(value);
 			break;
 		case I2C:
 			Wire.beginTransmission(g_i2c_address);
@@ -159,7 +161,7 @@ void SerialLCD::command(int value) {
 size_t SerialLCD::write(uint8_t value) {
 	switch (g_interface) {
 		case RS232: 
-			Serial.write(value);
+			LCD_SERIAL.write(value);
 			break;
 		case I2C:
 			Wire.beginTransmission(g_i2c_address);
@@ -270,7 +272,7 @@ void SerialLCD::init () {
 	delay(500);
 	switch (g_interface) {
 		case RS232:
-			Serial.begin(g_baudrate);
+			LCD_SERIAL.begin(g_baudrate);
 			break;
 		case I2C:
 			Wire.begin();
@@ -302,10 +304,10 @@ void SerialLCD::createChar(unsigned char char_num, unsigned char *rows)
 	
 	switch (g_interface) {
 		case RS232:
-			Serial.write(0xFE);
-			Serial.write(LOADCUSTOMCHARACTER);
-			Serial.write(char_num);
-			Serial.write(rows, CUSTOM_CHAR_SIZE);
+			LCD_SERIAL.write(0xFE);
+			LCD_SERIAL.write(LOADCUSTOMCHARACTER);
+			LCD_SERIAL.write(char_num);
+			LCD_SERIAL.write(rows, CUSTOM_CHAR_SIZE);
 			break;
 		case I2C:
 			Wire.beginTransmission(g_i2c_address);
@@ -352,7 +354,7 @@ void  SerialLCD::printstr(const char c[])
 	switch (g_interface) {
 		case RS232:
 			while (len--)
-				Serial.write(*c++);
+				LCD_SERIAL.write(*c++);
 			break;
 		case I2C:
 			Wire.beginTransmission(g_i2c_address);
